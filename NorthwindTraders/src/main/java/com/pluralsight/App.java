@@ -21,17 +21,26 @@ public class App {
             Statement statement = connection.createStatement();
 
             // Define your query
-            String query = "SELECT ProductName FROM Products";
+            String query = "SELECT ProductID, ProductName, UnitPrice, UnitsInStock FROM Products";
 
             // Execute your query
             ResultSet results = statement.executeQuery(query);
 
             // 3. Process the results
-            System.out.println("Products sold by Northwind:");
+            System.out.println("Product Details:");
             while (results.next()) {
-                String name = results.getString("ProductName");
-                System.out.println(name);
+                int productID = results.getInt("ProductID");
+                String productName = results.getString("ProductName");
+                double unitPrice = results.getDouble("UnitPrice");
+                int unitsInStock = results.getInt("UnitsInStock");
+
+                System.out.println("---------------------------");
+                System.out.println("Product Id: " + productID);
+                System.out.println("Name: " + productName);
+                System.out.println("Price: " + unitPrice);
+                System.out.println("Stock: " + unitsInStock);
             }
+
 
             // 4. Close the connection
             connection.close();
