@@ -1,51 +1,90 @@
 package com.pluralsight;
 
 import java.sql.*;
+import java.util.Scanner;
 
 public class PreparedStatementApp {
     public static void main(String[] args) {
-        // Step 1: Define the database connection details
         String url = "jdbc:mysql://127.0.0.1:3306/northwind"; // Database URL
-        String user = args[0]; // Username (passed as a command-line argument)
-        String password = args[1]; // Password (passed as a command-line argument)
+        String user = args[0]; // Database username (passed as a command-line argument)
+        String password = args[1]; // Database password (passed as a command-line argument)
+        Scanner scanner = new Scanner(System.in);
 
-        // Step 2: Define the SQL query to retrieve product details
+        while (true) {
+            // Home screen menu
+            System.out.println("What do you want to do?");
+            System.out.println("1) Display all products");
+            System.out.println("2) Display all customers");
+            System.out.println("0) Exit");
+            System.out.print("Select an option: ");
+            int option = scanner.nextInt();
+
+            if (option == 0) {
+                System.out.println("Exiting the application...");
+                break; // Exit the loop
+            }
+
+            switch (option) {
+                case 1:
+                    displayProducts(url, user, password);
+                    break;
+                case 2:
+                    displayCustomers(url, user, password);
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+        scanner.close();
+    }
+
+    // Method to display all products
+    private static void displayProducts(String url, String user, String password) {
         String query = "SELECT ProductID, ProductName, UnitPrice, UnitsInStock FROM Products";
 
-        try {
-            // Step 3: Establish a connection to the database
-            Connection connection = DriverManager.getConnection(url, user, password);
-            System.out.println("Connected to the database!");
+        try (Connection connection = DriverManager.getConnection(url, user, password);
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet results = statement.executeQuery()) {
 
-            // Step 4: Use a PreparedStatement to execute the query
-            PreparedStatement statement = connection.prepareStatement(query);
-
-            // Step 5: Execute the query and retrieve results
-            ResultSet results = statement.executeQuery();
-
-            // Step 6: Print the table header
             System.out.printf("%-5s %-25s %-10s %-10s%n", "Id", "Name", "Price", "Stock");
             System.out.println("----------------------------------------------------------");
 
-            // Step 7: Process and display results in tabular format
             while (results.next()) {
                 int productId = results.getInt("ProductID");
                 String productName = results.getString("ProductName");
                 double unitPrice = results.getDouble("UnitPrice");
                 int unitsInStock = results.getInt("UnitsInStock");
 
-                // Print each row
                 System.out.printf("%-5d %-25s %-10.2f %-10d%n", productId, productName, unitPrice, unitsInStock);
             }
-
-            // Step 8: Close resources
-            results.close();
-            statement.close();
-            connection.close();
-            System.out.println("Connection closed.");
         } catch (SQLException e) {
-            // Handle SQL exceptions
-            System.err.println("Database connection failed.");
+            System.err.println("Error retrieving products: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // Method to display all customers
+    private static void displayCustomers(String url, String user, String password) {
+        String query = "SELECT ContactName, CompanyName, City, Country, Phone FROM Customers ORDER BY Country";
+
+        try (Connection connection = DriverManager.getConnection(url, user, password);
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet results = statement.executeQuery()) {
+
+            System.out.printf("%-25s %-30s %-15s %-15s %-15s%n", "Contact Name", "Company Name", "City", "Country", "Phone");
+            System.out.println("-------------------------------------------------------------------------------");
+
+            while (results.next()) {
+                String contactName = results.getString("ContactName");
+                String companyName = results.getString("CompanyName");
+                String city = results.getString("City");
+                String country = results.getString("Country");
+                String phone = results.getString("Phone");
+
+                System.out.printf("%-25s %-30s %-15s %-15s %-15s%n", contactName, companyName, city, country, phone);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving customers: " + e.getMessage());
             e.printStackTrace();
         }
     }
