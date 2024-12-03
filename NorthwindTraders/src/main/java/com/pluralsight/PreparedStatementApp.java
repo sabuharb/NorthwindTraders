@@ -23,39 +23,22 @@ public class PreparedStatementApp {
             // Step 5: Execute the query and retrieve results
             ResultSet results = statement.executeQuery();
 
-            // Step 6: Process the results
-            System.out.println("Product Details:");
+            // Step 6: Print the table header
+            System.out.printf("%-5s %-25s %-10s %-10s%n", "Id", "Name", "Price", "Stock");
+            System.out.println("----------------------------------------------------------");
 
-            // Option 1: Display as Stacked Information
+            // Step 7: Process and display results in tabular format
             while (results.next()) {
                 int productId = results.getInt("ProductID");
                 String productName = results.getString("ProductName");
                 double unitPrice = results.getDouble("UnitPrice");
                 int unitsInStock = results.getInt("UnitsInStock");
 
-                // Print in stacked format
-                System.out.println("---------------------------");
-                System.out.println("Product Id: " + productId);
-                System.out.println("Name: " + productName);
-                System.out.println("Price: " + unitPrice);
-                System.out.println("Stock: " + unitsInStock);
+                // Print each row
+                System.out.printf("%-5d %-25s %-10.2f %-10d%n", productId, productName, unitPrice, unitsInStock);
             }
 
-            // Uncomment the following block for Option 2: Rows of Information
-
-            System.out.printf("%-5s %-20s %-10s %-10s%n", "Id", "Name", "Price", "Stock");
-            System.out.println("----------------------------------------------");
-            while (results.next()) {
-                int productId = results.getInt("ProductID");
-                String productName = results.getString("ProductName");
-                double unitPrice = results.getDouble("UnitPrice");
-                int unitsInStock = results.getInt("UnitsInStock");
-
-                // Print in row format
-                System.out.printf("%-5d %-20s %-10.2f %-10d%n", productId, productName, unitPrice, unitsInStock);
-            }
-
-            // Step 7: Close resources
+            // Step 8: Close resources
             results.close();
             statement.close();
             connection.close();
