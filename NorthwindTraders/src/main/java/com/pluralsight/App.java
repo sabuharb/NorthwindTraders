@@ -11,8 +11,8 @@ public class App {
 
             // 1. Open a connection to the database
             String jdbcURL = "jdbc:mysql://localhost:3306/northwind";
-            String username = "root";
-            String password = "Ismael503!";
+            String username = "    ";
+            String password = "         ";
 
             Connection connection = DriverManager.getConnection(jdbcURL, username, password);
             System.out.println("Connected to the database!");
